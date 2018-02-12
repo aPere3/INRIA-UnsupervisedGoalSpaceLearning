@@ -141,7 +141,7 @@ if __name__ == '__main__':
     assert os.path.isdir(args['path']), "You provided a wrong path."
 
     if args['name'] == '':
-        args['name'] = ("RGE-FI %s %s"%(args['environment'], str(datetime.datetime.now()))).title()
+        args['name'] = ("RGE-EFR %s %s"%(args['environment'], str(datetime.datetime.now()))).title()
 
     args['path'] = os.path.join(args['path'], args['name'])
     logger = logging.getLogger(args['name'],)
