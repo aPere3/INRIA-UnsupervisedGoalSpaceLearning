@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 rm log.txt;
 mkdir results;
-export EXP_INTERP='/home/apere/Applications/anaconda3/envs/py2.7/bin/python' ;
+export EXP_INTERP='/usr/bin/python' ;
 
 echo '=================> Performing RPE';
 echo '=================> Rpe Armball';
