@@ -3,19 +3,14 @@
 # Exploration
 
 """
-This module contains exploration algorithms classes.
+This module contains exploration model classes.
 
-Author: Anonymous
+Author: Alexandre Péré
 """
 
 import explauto.sensorimotor_model.non_parametric
 import explauto.utils.config
 import numpy as np
-import sys
-if 'ipykernel' in sys.modules:
-    from tqdm import tqdm_notebook as tqdm
-else:
-    from tqdm import tqdm
 
 class BaseExploration(object):
     """
@@ -131,10 +126,10 @@ class GoalBabblingExploration(BaseExploration):
         self._model.update(m, z)
 
         # We loop through iterations
-        for i in tqdm(range(nb_iterations), "Performing Exploration"):
+        for i in range(nb_iterations):
             # Random Motor Exploration + BootStrap
             bootstrap = np.logical_and.reduce(np.array(self._state_list)!=np.array(self._environment.initial_pose), axis=1).sum() == 0
-            if bootstrap or np.random.random() < 0.2:
+            if bootstrap or i < 100 or np.random.random() < 0.2:
                 m = self._environment.random_motors()[0]
             # Goal Babbling
             else:
@@ -165,7 +160,7 @@ class RandomMotorBabblingExploration(BaseExploration):
         self._model.mode = "explore"
 
         # We loop through iterations
-        for i in tqdm(range(nb_iterations), "Performing Exploration"):
+        for i in range(nb_iterations):
             # Random Babbling
             m = self._environment.random_motors()[0]
             # We perform the motor action

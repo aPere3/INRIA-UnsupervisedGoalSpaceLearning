@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-This module contains base implementation of a FeedForward Neural Network trained using gradient descent and friends.
+This module contains base implementation of a NN classifier trained using supervised learning.
 
-Author: Anonymous
+Author: Alexandre Péré
+
 """
 
 import tensorflow as tf
@@ -409,7 +410,9 @@ class BaseNetwork(object):
         The private session initialization method.
         """
 
-        self._tf_session = tf.Session(graph=self._tf_graph)
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        self._tf_session = tf.Session(graph=self._tf_graph, config=config)
 
     def _construct_arch(self):
         """

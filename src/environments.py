@@ -4,7 +4,7 @@
 """
 This module contains simulation logic for different environment.
 
-Author: Anonymous
+Author: Alexandre Péré (with help from Sebastien Forestier)
 """
 
 import numpy as np

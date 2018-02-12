@@ -5,13 +5,15 @@
 """
 This module contains embeddings. We mimic the sklearn interface.
 
-Author: Anonymous
+Author: Alexandre Péré
 """
 
 import sklearn.manifold
 import sklearn.decomposition
 import architectures
 import numpy as np
+from sklearn.externals import joblib
+
 
 class BaseEmbedding(object):
     """
@@ -57,10 +59,17 @@ class BaseEmbedding(object):
 
         return None, None
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        raise NotImplementedError("Calling a virtual method")
+
 
 class IsomapEmbedding(BaseEmbedding):
     """
-    The isomap embedding. Just a wrapper.
+    The isomap embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -88,9 +97,17 @@ class IsomapEmbedding(BaseEmbedding):
 
         return output
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        joblib.dump(self._model, path)
+
+
 class AutoEncoderEmbedding(BaseEmbedding):
     """
-    The autoencoder embedding.
+    The autoencoder embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -107,7 +124,7 @@ class AutoEncoderEmbedding(BaseEmbedding):
         X = X.reshape([X.shape[0],-1])
 
         # We call the sklearn function
-        self._model.train(X_train=X, y_train=X, iterations=int(2e5), batch_size=100, disable_progress=False)
+        self._model.train(X_train=X, y_train=X, iterations=int(2e5), batch_size=100, disable_progress=True)
 
     def transform(self, X, sampling=False):
 
@@ -127,9 +144,17 @@ class AutoEncoderEmbedding(BaseEmbedding):
 
         return loss, likelihood
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        self._model.save(path)
+
+
 class DenoisingAutoEncoderEmbedding(BaseEmbedding):
     """
-    The stacked denoising autoencoder embedding.
+    The stacked denoising autoencoder embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -146,7 +171,7 @@ class DenoisingAutoEncoderEmbedding(BaseEmbedding):
         X = X.reshape([X.shape[0],-1])
 
         # We call the sklearn function
-        self._model.train(X_train=X, y_train=X, iterations=int(1e5), batch_size=100, disable_progress=False)
+        self._model.train(X_train=X, y_train=X, iterations=int(1e5), batch_size=100, disable_progress=True)
 
     def transform(self, X, sampling=False):
 
@@ -166,10 +191,17 @@ class DenoisingAutoEncoderEmbedding(BaseEmbedding):
 
         return loss, likelihood
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        self._model.save(path)
+
 
 class VariationalAutoEncoderEmbedding(BaseEmbedding):
     """
-    The variational autoencoder embedding.
+    The variational autoencoder embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -186,7 +218,7 @@ class VariationalAutoEncoderEmbedding(BaseEmbedding):
         X = X.reshape([X.shape[0],-1])
 
         # We call the sklearn function
-        self._model.train(X_train=X, y_train=X, iterations=int(1e5), batch_size=100, disable_progress=False)
+        self._model.train(X_train=X, y_train=X, iterations=int(1e5), batch_size=100, disable_progress=True)
 
     def transform(self, X, sampling=False):
 
@@ -206,10 +238,17 @@ class VariationalAutoEncoderEmbedding(BaseEmbedding):
 
         return loss, likelihood
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        self._model.save(path)
+
 
 class BetaVariationalAutoEncoderEmbedding(BaseEmbedding):
     """
-    The beta variational autoencoder embedding.
+    The beta variational autoencoder embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -226,7 +265,7 @@ class BetaVariationalAutoEncoderEmbedding(BaseEmbedding):
         X = X.reshape([X.shape[0],-1])
 
         # We call the sklearn function
-        self._model.train(X_train=X, y_train=X, iterations=int(1e5), batch_size=100, disable_progress=False)
+        self._model.train(X_train=X, y_train=X, iterations=int(1e5), batch_size=100, disable_progress=True)
 
     def transform(self, X, sampling=False):
 
@@ -246,9 +285,17 @@ class BetaVariationalAutoEncoderEmbedding(BaseEmbedding):
 
         return loss, likelihood
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        self._model.save(path)
+
+
 class PlanarVariationalAutoEncoderEmbedding(BaseEmbedding):
     """
-    The planar flow variationa autoencoder embedding.
+    The planar flow variationa autoencoder embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -265,7 +312,7 @@ class PlanarVariationalAutoEncoderEmbedding(BaseEmbedding):
         X = X.reshape([X.shape[0],-1])
 
         # We call the sklearn function
-        self._model.train(X_train=X, y_train=X, iterations=int(5e4), batch_size=100, disable_progress=False)
+        self._model.train(X_train=X, y_train=X, iterations=int(5e4), batch_size=100, disable_progress=True)
 
     def transform(self, X, sampling=False):
 
@@ -286,10 +333,17 @@ class PlanarVariationalAutoEncoderEmbedding(BaseEmbedding):
 
         return loss, likelihood
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        self._model.save(path)
+
 
 class RadialVariationalAutoEncoderEmbedding(BaseEmbedding):
     """
-    The radial flow variational autoencoder embedding.
+    The radial flow variational autoencoder embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -306,7 +360,7 @@ class RadialVariationalAutoEncoderEmbedding(BaseEmbedding):
         X = X.reshape([X.shape[0],-1])
 
         # We call the sklearn function
-        self._model.train(X_train=X, y_train=X, iterations=int(5e4), batch_size=100, disable_progress=False)
+        self._model.train(X_train=X, y_train=X, iterations=int(5e4), batch_size=100, disable_progress=True)
 
     def transform(self, X, sampling=False):
 
@@ -327,9 +381,17 @@ class RadialVariationalAutoEncoderEmbedding(BaseEmbedding):
 
         return loss, likelihood
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        self._model.save(path)
+
+
 class TsneEmbedding(BaseEmbedding):
     """
-    The tsne embedding.
+    The tsne embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -357,10 +419,17 @@ class TsneEmbedding(BaseEmbedding):
 
         return output
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        joblib.dump(self._model, path)
+
 
 class PcaEmbedding(BaseEmbedding):
     """
-    The PCA embedding.
+    The PCA embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -388,10 +457,17 @@ class PcaEmbedding(BaseEmbedding):
 
         return output
 
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        joblib.dump(self._model, path)
+
 
 class MdsEmbedding(BaseEmbedding):
     """
-    The Multi Dimensional Analysis embedding.
+    The Multi Dimensional Analysis embedding
     """
 
     def __init__(self, *args, **kwargs):
@@ -418,6 +494,13 @@ class MdsEmbedding(BaseEmbedding):
         output = self._model.transform(X)
 
         return output
+
+    def save(self, path):
+        """
+        This method saves the network
+        """
+
+        joblib.dump(self._model, path)
 
 
 class PixelEmbedding(BaseEmbedding):

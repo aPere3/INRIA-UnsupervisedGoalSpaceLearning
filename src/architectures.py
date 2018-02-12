@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-This module contains ready to train architectures.
+This module contains ready to train architectures using standard training and stabilized ones.
 
-Author: Anonymous
+Author: Alexandre Péré
+
 """
 
 from network import BaseNetwork
@@ -529,7 +530,7 @@ class VGG16VAE(BaseNetwork):
 
 class DenseRadialVAE(BaseNetwork):
     """
-    A Simple Dense VAE, using Radial Flow.
+    A Simple Dense VAE following specifications from Irina Higgins's paper, using Radial Flow
     """
 
     def _construct_arch(self, emb_size=10, signal_size=70**2, nb_trans=10, beta=1., lr=1e-3, ann_duration=1e4):
@@ -663,7 +664,7 @@ class DenseRadialVAE(BaseNetwork):
 
 class DensePlanarVAE(BaseNetwork):
     """
-    A Simple Dense VAE, using Planar Flow.
+    A Simple Dense VAE following specifications from Irina Higgins's paper, using Planar Flow
     """
 
     def _construct_arch(self, emb_size=10, signal_size=70**2, nb_trans=10, beta=1., lr=1e-3, ann_duration=1e4):
@@ -798,10 +799,10 @@ class DensePlanarVAE(BaseNetwork):
 
 class DenseVAE(BaseNetwork):
     """
-    A Simple Dense VAE.
+    A Simple Dense VAE following specifications from Irina Higgins's paper
     """
 
-    def _construct_arch(self, lr=1e-4, beta=1., emb_size=10, signal_size=70, ann_duration=1e4, bn=True):
+    def _construct_arch(self, lr=1e-4, beta=1., emb_size=10, signal_size=70):
 
         with self._tf_graph.as_default():
 
@@ -815,22 +816,18 @@ class DenseVAE(BaseNetwork):
                     net_enc_w1 = tf.Variable(tf.truncated_normal([signal_size**2, 1200], stddev=0.001), name="Weights")
                     net_enc_b1 = tf.Variable(tf.constant(0., shape=[1200]), name="Biases")
                     net_enc_h1 = tf.nn.relu(tf.matmul(self._net_input, net_enc_w1) + net_enc_b1)
-                    if bn: net_enc_h1 = batch_norm(net_enc_h1, is_training = net_is_training)
                 with tf.variable_scope("DenseLayer_2"):
                     net_enc_w2 = tf.Variable(tf.truncated_normal([1200, 1200], stddev=0.001), name="Weights")
                     net_enc_b2 = tf.Variable(tf.constant(0., shape=[1200]), name="Biases")
                     net_enc_h2 = tf.nn.relu(tf.matmul(net_enc_h1, net_enc_w2) + net_enc_b2)
-                    if bn: net_enc_h2 = batch_norm(net_enc_h2, is_training = net_is_training)
                 with tf.variable_scope("Output_layer_mu"):
                     net_enc_w3 = tf.Variable(tf.truncated_normal([1200, emb_size], stddev=0.001), name="Weights")
                     net_enc_b3 = tf.Variable(tf.constant(0., shape=[emb_size]), name="Biases")
                     net_enc_mu = tf.matmul(net_enc_h2, net_enc_w3) + net_enc_b3
-                    if bn: net_enc_mu = batch_norm(net_enc_mu, is_training = net_is_training)
                 with tf.variable_scope("OutputLayer_logvar"):
                     net_enc_w4 = tf.Variable(tf.truncated_normal([1200, emb_size], stddev=0.001), name="Weights")
                     net_enc_b4 = tf.Variable(tf.constant(0., shape=[emb_size]), name="Biases")
                     net_enc_log_var = tf.matmul(net_enc_h2, net_enc_w4) + net_enc_b4
-                    if bn: net_enc_log_var = batch_norm(net_enc_log_var, is_training = net_is_training)
             with tf.variable_scope("Reparametrization"):
                 net_rep_eps = tf.random_normal([emb_size])
                 net_rep_mu = net_enc_mu
@@ -842,24 +839,14 @@ class DenseVAE(BaseNetwork):
                     net_dec_w1 = tf.Variable(tf.truncated_normal([emb_size, 1200], stddev=0.001), name="Weights")
                     net_dec_b1 = tf.Variable(tf.constant(0., shape=[1200]), name="Biases")
                     net_dec_h1 = tf.nn.relu(tf.matmul(net_rep_z, net_dec_w1) + net_dec_b1)
-                    if bn: net_dec_h1 = batch_norm(net_dec_h1, is_training = net_is_training)
                 with tf.variable_scope("DenseLayer_2"):
                     net_dec_w2 = tf.Variable(tf.truncated_normal([1200, 1200], stddev=0.001), name="Weights")
                     net_dec_b2 = tf.Variable(tf.constant(0., shape=[1200]), name="Biases")
                     net_dec_h2 = tf.nn.relu(tf.matmul(net_dec_h1, net_dec_w2) + net_dec_b2)
-                    if bn: net_dec_h2 = batch_norm(net_dec_h2, is_training = net_is_training)
-                """
-                with tf.variable_scope("DenseLayer_3"):
-                    net_dec_w3 = tf.Variable(tf.truncated_normal([1200, 1200], stddev=0.001), name="Weights")
-                    net_dec_b3 = tf.Variable(tf.constant(0., shape=[1200]), name="Biases")
-                    net_dec_h3 = tf.nn.relu(tf.matmul(net_dec_h2, net_dec_w3) + net_dec_b3)
-                    if bn: net_dec_h3 = batch_norm(net_dec_h3, is_training = net_is_training)
-                """
                 with tf.variable_scope("Output_layer_4"):
                     net_dec_w4 = tf.Variable(tf.truncated_normal([1200, signal_size**2], stddev=0.001), name="Weights")
                     net_dec_b4 = tf.Variable(tf.constant(0., shape=[signal_size**2]), name="Biases")
                     net_dec_h4 = tf.matmul(net_dec_h2, net_dec_w4) + net_dec_b4
-                    if bn: net_dec_h4 = batch_norm(net_dec_h4, is_training = net_is_training)
             with tf.variable_scope('Output'):
                 self._net_output = tf.nn.sigmoid(net_dec_h4, name='Output')
                 self._net_label = tf.placeholder(tf.float32, shape=[None, signal_size**2], name='Label')
@@ -871,8 +858,7 @@ class DenseVAE(BaseNetwork):
                 net_loss_kld = - net_beta * 0.5 * tf.reduce_sum(net_loss_kld, reduction_indices=1)
                 net_loss_lkh = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(logits=net_dec_h4, labels=self._net_input), reduction_indices=1)
                 self._net_train_step = tf.constant([1.])
-                net_annealing = tf.minimum(1.,0.01+self._net_train_step/ann_duration)
-                self._net_loss = tf.reduce_mean(net_annealing*net_loss_kld + net_loss_lkh)
+                self._net_loss = tf.reduce_mean(net_loss_kld + net_loss_lkh)
 
             # Define Accuracy # ========================================================================================
             with tf.variable_scope('Performance'):
@@ -896,12 +882,12 @@ class DenseVAE(BaseNetwork):
                     tf.summary.scalar('Kullback-Liebler', tf.reduce_mean(net_loss_kld))
                     tf.summary.scalar('LogLikelihood', tf.reduce_mean(-net_loss_lkh))
                     tf.summary.scalar('Performance', self._net_performance)
-                    tf.summary.scalar('Annealing', net_annealing[0])
 
 
 class DenseAE(BaseNetwork):
     """
-    A Deep Dense AutoEncoder. Trained using direct simple Gradient descent on full stack.
+    A Deep Dense AutoEncoder following specifications from Irina Higgins's paper. Trained using direct simple Gradient
+    descent on full stack.
     """
 
     def _construct_arch(self, lr=1e-4, emb_size=10, signal_size=70**2, bn=False):

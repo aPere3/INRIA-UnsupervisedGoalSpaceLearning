@@ -4,8 +4,6 @@
 
 """
 This module contains measure methods to assess performance of learned manifolds.
-
-Author: Anonymous
 """
 
 import numpy as np

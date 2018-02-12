@@ -5,7 +5,8 @@
 """
 This module contains Embedding Quality measures based on coranking matrix.
 
-Author: Anonymous
+
+Author: Alexandre Péré
 """
 
 

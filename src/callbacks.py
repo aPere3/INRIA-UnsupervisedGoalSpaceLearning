@@ -4,7 +4,8 @@
 """
 This module contains callback to use with Base Network training method.
 
-Author: Anonymous
+Author: Alexandre Péré
+
 """
 
 import numpy

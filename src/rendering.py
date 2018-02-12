@@ -4,7 +4,8 @@
 """
 This module contains renderers for environments.
 
-Author: Anonymous
+Author: Alexandre Péré
+
 """
 
 import numpy as np

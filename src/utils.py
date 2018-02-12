@@ -3,13 +3,15 @@
 
 """
 This module contains some utilities methods.
-
-Author: Anonymous
 """
+
 
 import numpy as np
 import scipy.spatial as ss
 import matplotlib.path
+
+
+
 
 def labels_to_categoricals(y):
     """

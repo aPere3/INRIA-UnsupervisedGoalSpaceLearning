@@ -5,7 +5,7 @@
 """
 This module contains experiment class, to help run experiments easily
 
-Author: Anonymous
+Author: Alexandre Péré
 """
 
 import uuid
